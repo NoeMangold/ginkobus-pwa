@@ -22,8 +22,32 @@ document.addEventListener("DOMContentLoaded", function (_e) {
     function geoloc() {
         if ("geolocation" in navigator) {
             var btnGeoloc = document.querySelector("#bcStations .btnGeoloc");
-            btnGeoloc.classList.toggle("active");
-            // TODO
+
+            if(btnGeoloc.classList.contains("active")) {
+                for(var st in stations) {
+                    delete stations[st].distance;
+                }
+                fSort = null;
+                btnGeoloc.classList.remove("active");
+                remplirStations();
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(function(position) {
+                fSort = function(position, id1, id2) {
+                    var d1 = distance(stations[id1].lat, stations[id1].lon, position.coords.latitude, position.coords.longitude);
+                    var d2 = distance(stations[id2].lat, stations[id2].lon, position.coords.latitude, position.coords.longitude);
+                    return d1 - d2;
+                }.bind(null, position);
+
+                for(var sta in stations) {
+                    var st = stations[sta];
+                    st.distance = distance(st.lat, st.lon, position.coords.latitude, position.coords.longitude)/1000
+                    st.distance = st.distance.toFixed(2);
+                }
+                btnGeoloc.classList.add("active");
+                remplirStations();
+            });
         }
         else {
             alert("Votre appareil ne supporte pas la géolocalisation.");    
