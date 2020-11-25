@@ -46,7 +46,7 @@ self.addEventListener('fetch', (e) => {
 					cache.put(e.request, response.clone());
 				})
 			})
-			.catche(function() {
+			.catch(function() {
 				return caches.match(e.request).then((r) => {
 					console.log('[Service Worker] Looking for resource in cache: ' + e.request.url);
 					return r;
