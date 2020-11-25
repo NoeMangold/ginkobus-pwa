@@ -44,7 +44,8 @@ self.addEventListener('fetch', (e) => {
 				return caches.open(cacheName).then((cache) => {
 					console.log('[Service Worker] Fetching from network and caching resource : ' + e.request.url);
 					cache.put(e.request, response.clone());
-				})
+					return response;
+				});
 			})
 			.catch(function() {
 				return caches.match(e.request).then((r) => {
